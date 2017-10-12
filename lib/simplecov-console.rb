@@ -5,7 +5,7 @@ class SimpleCov::Formatter::Console
 
   VERSION = File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../VERSION")).read.strip
 
-  ATTRIBUTES = [:table_options]
+  ATTRIBUTES = [:table_options, :table_size]
   class << self
     attr_accessor(*ATTRIBUTES)
   end
@@ -55,9 +55,10 @@ class SimpleCov::Formatter::Console
         :missing => missed(f.missed_lines).join(", ") }
     end
 
-    if table.size > 15 then
-      puts "showing bottom (worst) 15 of #{table.size} files"
-      table = table.slice(0, 15)
+    table_size = SimpleCov::Formatter::Console.table_size
+    if table_size && table_size < table.size
+      puts "showing bottom (worst) #{table_size} of #{table.size} files"
+      table = table.slice(0, table_size)
     end
 
     table_options = SimpleCov::Formatter::Console.table_options || {}
